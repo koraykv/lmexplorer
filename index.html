@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <title>Senna Embeddings</title>
+    <script type="text/javascript" src="d3.v2.js"></script>
+    <style type="text/css">
+      body { color: black; background: white; font: 80% "Lucida Grande", Verdana, Lucida, Helvetica, Arial, sans-serif;}
+      h1 { font-family: arial;}
+      div#qdiv { font-family: arial;}
+      ul { list-style-type: none; padding-top : 10px; padding-left: 5px; }
+      ul li { display: inline ;  }
+      svg {cursor:default;}
+  </style>  </head>
+  <body>
+    Type a single word query in the query box and press enter. Continue exploring by hovering and clicking.
+    <div id="qdiv">
+      <ul>
+	<li>Senna Query 
+	<li><input id="query" type="text"/>
+	<li>  Highlight
+	<li><input id="highlighttext" type="text"/>
+	<li><input id="clear" type="button" value="Clear Page"/>
+	<li id="status"/>
+      </ul>
+    </div>
+    <div id="map" style="margin-top:10px; overflow:scroll;">
+      <div id="row" style="white-space:nowrap; height:900px; float:left; clear:left;">
+      </div>
+    </div>
+    <script type="text/javascript" src="embed.js"></script>
+  </body>
+</html>

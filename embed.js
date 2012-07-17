@@ -1,17 +1,32 @@
+
 (function() {
-    var width=120
-    var height=900
-    var tw = 15
+    var width=120;
+    var height=900;
+    var tw = 15;
     var labels={};
     var rows;
-    var status = d3.select('#status')
-    status.text('Loading data...')
+    var status = d3.select('#status');
+    var status2 = d3.select('#status2');
+    status.text('Loading data...');
+    status2.text('');
+    d3.select('#qdiv').attr('disabled',true);
+    var updatecntr = function(i) {
+	
+	status2.transition().style('opacity','1');
+	status2.text('['+i+']');
+	status2.transition().style('opacity','0');
+    };
     var w = d3.text('embed.csv', function(str){
-	rows = d3.csv.parseRows(str,function(row,i) {
+	rows = d3.csv.parseRows(str, function(row,i) {
 	    labels[row[0]] = i;
+	    if (i % 1000 == 0) {
+		updatecntr(i);
+	    }
 	    return row;
 	});
-	status.text('')
+	d3.select('#qdiv').attr('disabled',false);
+	status.transition().style('opacity','0');
+	status2.transition().style('opacity','0');
     });
     d3.select('#query').on("keyup", function(d,i) {
 	if (d3.event.keyCode != 13){

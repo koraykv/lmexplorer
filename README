@@ -1,0 +1,7 @@
+Language model explorer. You can see a running version at
+http://cs.nyu.edu/~koray/senna/
+
+In order to run this, clone the repo and download the embed.csv file from
+http://cs.nyu.edu/~koray/senna/embed.csv 
+into lmexplorer directory.
+

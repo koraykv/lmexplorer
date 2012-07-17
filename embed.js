@@ -1,4 +1,3 @@
-
 (function() {
     var width=120
     var height=900
@@ -58,7 +57,7 @@
 	    .attr('x',30)
 	    .attr('y',0)
 	    .attr('text-anchor','left')
-	    .text('close');
+	    .text('remove');
 	var elems=box.append("g")
 	    .attr("transform", "translate(5,40)")
 	    .attr("id","textbox")

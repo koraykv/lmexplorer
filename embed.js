@@ -23,7 +23,7 @@
 	    }
 	    return row;
 	});
-	d3.select('#qdiv').selectAll('input').attr('disabled',false);
+	d3.select('#qdiv').selectAll('input').attr('disabled',null);
 	status.transition().style('opacity','0');
 	status2.transition().style('opacity','0');
     });

@@ -9,7 +9,7 @@
     var status2 = d3.select('#status2');
     status.text('Loading data...');
     status2.text('');
-    d3.select('#qdiv').attr('disabled',true);
+    d3.select('#qdiv').selectAll('input').attr('disabled',true);
     var updatecntr = function(i) {
 	status2.transition().style('opacity','1');
 	status2.text('['+i+']');
@@ -23,7 +23,7 @@
 	    }
 	    return row;
 	});
-	d3.select('#qdiv').attr('disabled',false);
+	d3.select('#qdiv').selectAll('input').attr('disabled',false);
 	status.transition().style('opacity','0');
 	status2.transition().style('opacity','0');
     });

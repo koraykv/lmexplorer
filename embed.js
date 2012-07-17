@@ -11,7 +11,6 @@
     status2.text('');
     d3.select('#qdiv').attr('disabled',true);
     var updatecntr = function(i) {
-	
 	status2.transition().style('opacity','1');
 	status2.text('['+i+']');
 	status2.transition().style('opacity','0');

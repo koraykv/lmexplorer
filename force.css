@@ -1,0 +1,44 @@
+circle.node {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+line.link {
+  stroke: #999;
+  stroke-opacity: .6;
+}
+body { 
+    color: black; 
+    background: white; 
+    font: 80% "Lucida Grande", Verdana, Lucida, Helvetica, Arial, sans-serif;
+}
+h1 { 
+    font-family: arial;
+}
+div#qdiv { 
+    font-family: arial;
+}
+
+ul { 
+    list-style-type: none; 
+    padding-top : 0px; 
+    padding-left: 0px; 
+}
+div#qdiv ul li { 
+    display: inline ; 
+    border:solid; 
+    border-color: darkgray; 
+    border-radius:3px; 
+    border-width: 1px;
+    padding: 5px;
+    margin: 2px;
+}
+ul li { 
+    display: inline ; 
+    border:solid; 
+    border-color: darkgray; 
+    border-radius:3px; 
+    border-width: 0px;
+    padding: 5px;
+    margin: 2px;
+}

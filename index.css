@@ -1,6 +1,16 @@
+
+svg {
+    cursor:default;
+}
+
+path.chord { 
+    fill-opacity: .67; 
+}
+
 circle.node {
   stroke: #fff;
   stroke-width: 1.5px;
+  opacity: 0.8;
 }
 
 line.link {
@@ -19,6 +29,14 @@ div#qdiv {
     font-family: arial;
 }
 
+#status {
+    border:none;
+    background-color:lightpink;
+    border-color: white; 
+    border-radius:3px; 
+    border-width: 0px;
+}
+
 ul { 
     list-style-type: none; 
     padding-top : 0px; 
@@ -33,7 +51,7 @@ div#qdiv ul li {
     padding: 5px;
     margin: 2px;
 }
-ul li { 
+div#divinfo ul li { 
     display: inline ; 
     border:solid; 
     border-color: darkgray; 
@@ -42,3 +60,4 @@ ul li {
     padding: 5px;
     margin: 2px;
 }
+

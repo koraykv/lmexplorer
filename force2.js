@@ -4,7 +4,7 @@
     var height = 700;
     var ttime = 200;
 
-    var color = d3.scale.category20();
+    var color = d3.scale.category10();
     var linkopacity = 0.8;
     var noderadius = 5;
     var charge = -100;
@@ -77,27 +77,30 @@
 	var words = [];
 	var links = [];
 	var nodes = [];
-
-	var getlinks = function(words) {
-	    links = [];
-	    nodes = [];
-	    var dic = {};
+	var dic = {};
+	var gcntr = 0;
+	var cntr = 0;
+	
+	var getlinks = function(newwords) {
+	    //links = [];
+	    //nodes = [];
+	    //var dic = {};
 	    // create the dictionary of all words
 	    // that originate from given words
 	    // and create links
-	    var cntr = 0;
-	    var gcntr = 0;
-	    words.forEach(function(w1) {
+	    var ii = 1;
+	    newwords.forEach(function(w1) {
 		// the first element is rows is the same as 
 		rows[labels[w1]].forEach(function(w2) {
 		    if (dic[w2] == null) {
 			dic[w2] = cntr;
-			nodes.push({name: w2, index:labels[w2], group:gcntr, idic:cntr, x:0, y:0});
+			nodes.push({name: w2, index:labels[w2], group:gcntr, idic:cntr});
+			//console.log(cntr,w1,w2,dic[w1],dic[w2])
 			cntr++;
 		    }
 		    if (w1 != w2) {
 			var tt = {source: dic[w1], target: dic[w2]};
-			//console.log(w1,w2,labels[w1],labels[w2],dic[w1],dic[w2],tt);
+			//console.log(ii++,w1,w2,labels[w1],labels[w2],dic[w1],dic[w2],tt);
 			links.push(tt);
 		    }
 		});
@@ -111,33 +114,96 @@
 	    //force.
 	    var draw = function(){
 
+		force.nodes([]).links([]);
 		force
 		    .nodes(nodes)
 		    .links(links)
 		    .start();
-		
+
+		//console.log(words.length,nodes.length,links.length)
+		var svg;
 		d3.select("#chart").selectAll('svg').remove()
-		var svg = d3.select("#chart").append("svg")
+		svg = d3.select("#chart").append("svg")
 		    .attr("width", width)
 		    .attr("height", height);
 		
+
+		var labels = svg.selectAll('text.label')
+		    .data(nodes).enter();
+
+		var g = labels
+		    .append('g')
+		    .attr('class','label')
+		    .attr('id',function(d) {
+			return 'w_'+d.name+'_chart'
+		    })
+		    .style('opacity',0);
+
+		g
+		    .append('rect')
+		    .attr('id',function(d) { return 'w_'+d.name+'_bg_chart'})
+		    .attr('height',tw*1.5)
+		    .style('fill','rgb(240,240,240)')
+		    .style('border','solid')
+		    .style('border-color','lightgray')
+		    .style('border-width','1px')		
+		    .attr('rx',3)
+		    .attr('ry',3)
+		    .attr('x',-5)
+		    .attr('y',-tw*1.5+5);
+
+		g
+		    .append('text')
+		    .text(function(d) {
+			return d.name
+		    })
+		    .each(function(d) {
+			var rw = this.getBBox().width;
+			d3.select('#chart').selectAll('#w_'+d.name+'_bg_chart')
+			    .attr('width',rw+10)
+		    });
+
+
 		var link = svg.selectAll("line.link")
-		    .data(links)
+		    .data(links);
+		link
 		    .enter().append("line")
 		    .attr("class", "link")
 		    .style("stroke-width", function(d) { return Math.sqrt(d.value); })
 		    .style('opacity',linkopacity);
 		
 		var node = svg.selectAll("circle.node")
-		    .data(nodes)
+		    .data(nodes);
+		node
 		    .enter().append("circle")
 		    .attr("class", "node")
+		    .attr('id',function(d) {return node.name})
 		    .attr("r", noderadius)
 		    .style("fill", function(d) { return color(d.group); })
+		    .on('click',function(d) {
+			plotall(d.name)
+		    })
+		    .on('mousemove',function(d,i) {
+			var id = '#w_'+d.name+'_chart'
+			var el = d3.select(id);
+			el
+			    .attr('transform',function(d,i) {
+				return 'translate('+(d.x+10)+','+(d.y - 0)+')';
+			    })
+			    .style('opacity',0.8);
+			// move the 'g' element to end (first in z-order)
+			d3.select('#chart').select('svg')[0][0]
+			    .appendChild(el[0][0])
+		    })
+		    .on('mouseout',function(d,i) {
+			var id = '#w_'+d.name+'_chart'
+			var el = d3.select(id);
+			var svg = d3.select('#chart').select('svg')[0][0]
+			el.style('opacity',0);
+			// move the element to top (last in z-order)
+			svg.insertBefore(el[0][0],svg.firstChild)
+		    })
 		    .call(force.drag);
-		
-		node.append("title")
-		    .text(function(d) { return d.name; });
 		
 		force.on("tick", function() {
 		    link.attr("x1", function(d) { return d.source.x; })
@@ -147,10 +213,6 @@
 		    
 		    node.attr("cx", function(d) { return d.x; })
 			.attr("cy", function(d) { return d.y; });
-
-		    stat.report('running...')
-		    stat.clear()
-		    //console.log(this)
 		});
 	    };
 
@@ -217,14 +279,18 @@
 	    d3.selectAll('#textbox').selectAll('text')
 		.style('font-weight','normal');
 
+	    /*
 	    d3.selectAll('#chart').selectAll('text')
 		.style('font-weight','normal');
+	    */
 
 	    d3.selectAll('#textbox').selectAll('rect')
 		.style('opacity',0);
-
-	    d3.selectAll('#chart').selectAll('rect')
+	    
+	    /*
+	    d3.selectAll('#chart').selectAll('g.label')
 		.style('opacity',0);
+	    */
 
 	    if (labels[htxt] == null || htxt == null || !htxt) {
 		return
@@ -233,8 +299,10 @@
 	    d3.selectAll('#w_'+htxt+"_bg")
 		.style('opacity',0.8);
 
-	    d3.selectAll('#w_'+htxt+"_bg_chart")
+	    /*
+	    d3.selectAll('#w_'+htxt+"_chart")
 		.style('opacity',0.8);
+	    */
 
 	    d3.selectAll('#w_'+htxt)
 		.style('font-weight','bold');
@@ -249,7 +317,8 @@
 		return;
 	    }
 	    words.push(input);
-	    getlinks(words);
+	    getlinks([input]);
+	    //console.log(nodes.length,links.length,nodes,links)
 	};
 	var plotall = function(input) {
 	    // check if this word is already in the graph

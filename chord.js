@@ -26,6 +26,7 @@
     var tw = 15;
 
     var status = d3.select('#status');
+    var infobox = d3.select('#info');
     var stat = {	
 	report: function(info) {
 	    status.style('opacity','1');
@@ -40,6 +41,21 @@
 	    status.transition().delay(1000).style('opacity','0');
 	}
     };
+    var info = {	
+	report: function(info) {
+	    infobox.style('opacity','1');
+	    infobox.text(info);
+	},
+	clear: function() {
+	    infobox.transition().style('opacity','0');
+	},
+	show: function(info) {
+	    infobox.style('opacity','1');
+	    infobox.text(info);
+	    infobox.transition().delay(1000).style('opacity','0');
+	}
+    };
+    info.report('You are viewing 0 words and 0 connections.');
     stat.report('Loading data...');
     d3.select('#qdiv').selectAll('input').attr('disabled',true);
     d3.text("embed.csv",function(imports) {
@@ -83,6 +99,7 @@
 		    if (dic[w] == null) dic[w]= cntr++;
 		});
 	    });
+	    var connections = cntr;
 
 	    // we have dictionary now, let's create counter matrix;
 	    var cmat = [];
@@ -113,6 +130,7 @@
 		    }
 		}
 	    });
+	    info.report('You are viewing '+words.length+' words and '+connections+' connections.');
 	    return mat;
 	}
 	

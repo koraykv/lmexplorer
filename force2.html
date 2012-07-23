@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
     <title>Senna Relationship Diagram</title>
     <script type="text/javascript" src="d3.v2.js"></script>
     <link type="text/css" rel="stylesheet" href="index.css"/>
@@ -13,9 +12,14 @@
 	<li id="status" style="background-color:lightpink;"/>
       </ul>
     </div>
-    <div id="qdiv">
+    <div id="qdiv" style="float:left;">
       <ul>
-	<li>Senna Query <input id="query" type="text"/>
+	<li>Senna Query<input id="query" type="text"/>
+	<li><input id="showlinks" type="checkbox" checked="true"/>Links
+	<li>Radius<input id="noderadius" type="range" min="1" max="25" step="1" value="5" />
+	<li>Charge<input id="charge" type="range" min="-200" max="0" step="10" value="-100" />
+	<li>Distance<input id="distance" type="range" min="0" max="200" step="5" value="30" />
+	<li>Gravity<input id="gravity" type="range" min="0" max="5" step="0.02" value="0.5" />
 	<li><input id="clear" type="button" value="Clear Page"/>
       </ul>
     </div>
@@ -23,6 +27,6 @@
       <div id="wordcol" style="float:left"></div>
       <div id="chart"></div>
     </div>
-    <script type="text/javascript" src="chord.js"></script>
+    <script type="text/javascript" src="force2.js"></script>
   </body>
 </html>

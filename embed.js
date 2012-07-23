@@ -6,26 +6,46 @@
     var labels={};
     var rows;
     var status = d3.select('#status');
-    var status2 = d3.select('#status2');
-    status.text('Loading data...');
-    status2.text('');
-    d3.select('#qdiv').selectAll('input').attr('disabled',true);
-    var updatecntr = function(i) {
-	status2.transition().style('opacity','1');
-	status2.text('['+i+']');
-	status2.transition().style('opacity','0');
+    var infobox = d3.select('#info');
+    var stat = {	
+	report: function(info) {
+	    status.style('opacity','1');
+	    status.text(info);
+	},
+	clear: function() {
+	    status.transition().style('opacity','0');
+	},
+	show: function(info) {
+	    status.style('opacity','1');
+	    status.text(info);
+	    status.transition().delay(1000).style('opacity','0');
+	}
     };
+    var info = {	
+	report: function(info) {
+	    infobox.style('opacity','1');
+	    infobox.text(info);
+	},
+	clear: function() {
+	    infobox.transition().style('opacity','0');
+	},
+	show: function(info) {
+	    infobox.style('opacity','1');
+	    infobox.text(info);
+	    infobox.transition().delay(1000).style('opacity','0');
+	}
+    };
+    info.report('You are viewing 0 words and 0 connections.');
+    stat.report('Loading data...');
+    info.report('Type query words in the query box to start.');
+    d3.select('#qdiv').selectAll('input').attr('disabled',true);
     var w = d3.text('embed.csv', function(str){
 	rows = d3.csv.parseRows(str, function(row,i) {
 	    labels[row[0]] = i;
-	    if (i % 1000 == 0) {
-		updatecntr(i);
-	    }
 	    return row;
 	});
 	d3.select('#qdiv').selectAll('input').attr('disabled',null);
-	status.transition().style('opacity','0');
-	status2.transition().style('opacity','0');
+	stat.clear();
     });
     d3.select('#query').on("keyup", function(d,i) {
 	if (d3.event.keyCode != 13){
@@ -36,9 +56,7 @@
     });
     var addcolumn = function(input) {
 	if (labels[input] == null) {
-	    status.style('opacity','1')
-	    status.text(input + " is not in dictionary")
-	    status.transition().delay(1000).style('opacity','0')
+	    stat.show(input + " is not in dictionary")
 	    return;
 	}
 	var neighbors=rows[labels[input]];
@@ -119,6 +137,7 @@
 		return "translate(" + [3, i*tw] + ")rotate(" + 0 + ")";
 	    })
 	    .text(function(d) { return d; })
+
     };
     var highlight = function(htxt) {
 	// clear previous stuff

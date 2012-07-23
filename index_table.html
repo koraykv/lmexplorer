@@ -5,14 +5,17 @@
     <link type="text/css" rel="stylesheet" href="index.css"/>
   </head>
   <body>
-    Type a single word query in the query box and press enter. Continue exploring by hovering and clicking.
+    <div id="divinfo">
+      <ul>
+	<li id="info"/>
+	<li id="status" style="background-color:lightpink;"/>
+      </ul>
+    </div>
     <div id="qdiv">
       <ul>
 	<li>Senna Query <input id="query" type="text"/>
 	<li>Highlight <input id="highlighttext" type="text"/>
 	<li><input id="clear" type="button" value="Clear Page"/>
-	<li id="status"  style="background-color:lightpink;"/>
-	<li id="status2"/>
       </ul>
     </div>
     <div id="map" style="margin-top:10px; overflow:scroll;">

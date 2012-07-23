@@ -47,9 +47,10 @@ div#qdiv ul li {
     border:solid; 
     border-color: darkgray; 
     border-radius:3px; 
-    border-width: 1px;
+    border-width: 0px;
     padding: 5px;
     margin: 2px;
+    background-color:#dbdb8d;/*rgb(240,240,240) ;*/
 }
 div#divinfo ul li { 
     display: inline ; 
@@ -61,3 +62,22 @@ div#divinfo ul li {
     margin: 2px;
 }
 
+#query, #highlighttext {
+    border-style: solid;
+    padding-left:2px;
+    margin-left:5px;
+    border-width: 1px;
+    border-color: darkgray; 
+}
+
+ul li input[type='range'] {
+    vertical-align:middle;
+}
+
+#info {
+    background-color: lightskyblue;
+}
+
+#wordcol{
+    margin-top: -20px;
+}

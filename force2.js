@@ -1,3 +1,6 @@
+var getidname = function (name) {
+    return name.replace(/[^a-z]/g,'_')
+};
 
 (function() {
     var width = 960;
@@ -73,11 +76,12 @@
 	/*
 	 * these are our shared variables to store the data
 	 */
-	var matrix = [];
 	var words = [];
 	var links = [];
 	var nodes = [];
 	var dic = {};
+	var order = [];
+	var importance = [];
 	var gcntr = 0;
 	var cntr = 0;
 	
@@ -94,6 +98,7 @@
 		rows[labels[w1]].forEach(function(w2) {
 		    if (dic[w2] == null) {
 			dic[w2] = cntr;
+			order[dic[w2]] = 0;
 			nodes.push({name: w2, index:labels[w2], group:gcntr, idic:cntr});
 			//console.log(cntr,w1,w2,dic[w1],dic[w2])
 			cntr++;
@@ -102,12 +107,18 @@
 			var tt = {source: dic[w1], target: dic[w2]};
 			//console.log(ii++,w1,w2,labels[w1],labels[w2],dic[w1],dic[w2],tt);
 			links.push(tt);
+			order[dic[w2]] = order[dic[w2]] + 1;
 		    }
 		});
 		gcntr++;
 	    });
 	    info.report('You are viewing '+words.length+' words and '+nodes.length+' nodes.');
-
+	    words.forEach(function(w) {
+		importance[dic[w]] = 0
+		rows[labels[w]].forEach(function(w2) {
+		    importance[dic[w]] = importance[dic[w]] + order[dic[w2]];
+		});
+	    });
 	};
 
 	var plot = function() {
@@ -135,13 +146,13 @@
 		    .append('g')
 		    .attr('class','label')
 		    .attr('id',function(d) {
-			return 'w_'+d.name+'_chart'
+			return getidname('w_'+d.name+'_chart')
 		    })
 		    .style('opacity',0);
 
 		g
 		    .append('rect')
-		    .attr('id',function(d) { return 'w_'+d.name+'_bg_chart'})
+		    .attr('id',function(d) { return getidname('w_'+d.name+'_bg_chart')})
 		    .attr('height',tw*1.5)
 		    .style('fill','rgb(240,240,240)')
 		    .style('border','solid')
@@ -159,7 +170,7 @@
 		    })
 		    .each(function(d) {
 			var rw = this.getBBox().width;
-			d3.select('#chart').selectAll('#w_'+d.name+'_bg_chart')
+			d3.select('#chart').selectAll('#'+getidname('w_'+d.name+'_bg_chart'))
 			    .attr('width',rw+10)
 		    });
 
@@ -178,13 +189,18 @@
 		    .enter().append("circle")
 		    .attr("class", "node")
 		    .attr('id',function(d) {return node.name})
-		    .attr("r", noderadius)
+		    .attr("r", function(d) {
+			var i = (importance[dic[d.name]] == null ? 0 : importance[dic[d.name]]);
+			//console.log(d.name,i)
+			//console.log(d.name,importance[dic[d.name]],Math.min(100,importance[dic[d.name]])/100*noderadius*2)
+			return noderadius + Math.min(200,i)/200*noderadius*2;
+		    })
 		    .style("fill", function(d) { return color(d.group); })
 		    .on('click',function(d) {
 			plotall(d.name)
 		    })
 		    .on('mousemove',function(d,i) {
-			var id = '#w_'+d.name+'_chart'
+			var id = '#'+getidname('w_'+d.name+'_chart')
 			var el = d3.select(id);
 			el
 			    .attr('transform',function(d,i) {
@@ -196,7 +212,7 @@
 			    .appendChild(el[0][0])
 		    })
 		    .on('mouseout',function(d,i) {
-			var id = '#w_'+d.name+'_chart'
+			var id = '#'+getidname('w_'+d.name+'_chart')
 			var el = d3.select(id);
 			var svg = d3.select('#chart').select('svg')[0][0]
 			el.style('opacity',0);
@@ -213,6 +229,9 @@
 		    
 		    node.attr("cx", function(d) { return d.x; })
 			.attr("cy", function(d) { return d.y; });
+
+		    stat.report('simulation running...');
+		    stat.clear();
 		});
 	    };
 
@@ -257,7 +276,7 @@
 	    elems.append("rect")
 		.style("opacity", 0.0)
 		.attr("text-anchor", "left")
-		.attr('id',function(d) { return "w_"+d+"_bg"; })
+		.attr('id',function(d) { return getidname("w_"+d+"_bg"); })
 		.style("fill","lightblue")
 		.attr("x",0)
 		.attr("y",function(d,i){return (i-1)*tw})
@@ -268,7 +287,7 @@
 	    elems.append("text")
 		.style("opacity", function(d,i) {return (1-i/neighbors.length/1.3);})
 		.attr("text-anchor", "left")
-		.attr('id',function(d) { return "w_"+d; })
+		.attr('id',function(d) { return getidname("w_"+d); })
 		.attr("transform", function(d,i) {
 		    return "translate(" + [3, i*tw] + ")rotate(" + 0 + ")";
 		})
@@ -296,7 +315,7 @@
 		return
 	    }
 
-	    d3.selectAll('#w_'+htxt+"_bg")
+	    d3.selectAll('#'+getidname('w_'+htxt+"_bg"))
 		.style('opacity',0.8);
 
 	    /*
@@ -304,7 +323,7 @@
 		.style('opacity',0.8);
 	    */
 
-	    d3.selectAll('#w_'+htxt)
+	    d3.selectAll('#'+getidname('w_'+htxt))
 		.style('font-weight','bold');
 	};
 	/*
@@ -367,9 +386,15 @@
 	    d3.select("#chart").selectAll('line.link').style('opacity',linkopacity);
 	});
 	d3.select('#noderadius').on('change', function(d) {
-	    noderadius = d3.event.srcElement.value;
+	    var newnoderadius = parseFloat(d3.event.srcElement.value);
 	    d3.select('#chart').selectAll('circle.node')
-		.attr('r',noderadius)
+		.attr('r',function(d) {
+		    var curradius = parseFloat(this.getAttribute('r'));
+		    var delta = newnoderadius - noderadius;
+		    console.log(curradius,newnoderadius, noderadius,curradius + delta)
+		    return curradius + delta
+		});
+	    noderadius = newnoderadius;
 	});
 	d3.select('#charge').on('change', function(d) {
 	    charge = d3.event.srcElement.value;
@@ -400,6 +425,14 @@
 		.style('opacity',0)
 		.remove();
 	    words = [];
+	    links = [];
+	    nodes = [];
+	    order = [];
+	    importance = [];
+	    dic = {};
+	    gcntr = 0;
+	    cntr = 0;
+	    info.report('You are viewing 0 words and 0 nodes.');
 	});
 
 
